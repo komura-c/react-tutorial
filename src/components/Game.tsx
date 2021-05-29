@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ISquare, History } from "interface";
+import { History, ISquare } from "interface";
 import { Board } from "./Board";
 import { Moves } from "./Moves";
+import { calculateWinInfo } from "./Logic";
 
 export const Game: React.FC = () => {
   const [history, setHistory] = useState<History[]>([
@@ -10,40 +11,21 @@ export const Game: React.FC = () => {
   const [stepNumber, setStepNumber] = useState<number>(0);
   const [xIsNext, setXIsNext] = useState<boolean>(true);
 
-  const calculateWinner = (squares: Array<ISquare>) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return squares[a];
-      }
-    }
-    return null;
-  };
-
-  const handleClick = (i: number) => {
+  const historyFunc = (history: History[]): ISquare[] => {
     const _history = history.slice(0, stepNumber + 1);
     const current = _history[_history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
-      return;
+    if (calculateWinInfo(squares)?.winner) {
+      return squares;
     }
-    squares[i] = xIsNext ? "X" : "O";
-    setHistory(_history.concat([{ squares: squares }]));
+    setHistory(_history.concat([{ squares }]));
     setStepNumber(_history.length);
+    return squares;
+  };
+
+  const handleClick = (i: number) => {
+    const squares = historyFunc(history);
+    squares[i] = xIsNext ? "X" : "O";
     setXIsNext(!xIsNext);
   };
 
@@ -53,25 +35,22 @@ export const Game: React.FC = () => {
   };
 
   const current = history[stepNumber];
-  const winner = calculateWinner(current.squares);
-
-  let status;
-  if (winner) {
-    status = "Winner: " + winner;
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
+  const winInfo = calculateWinInfo(current.squares);
+  const status = winInfo?.winner
+    ? `Winner: ${winInfo.winner}`
+    : `Next player: ${xIsNext ? "X" : "O"}`;
 
   return (
     <div className="game">
       <div className="game-board">
         <Board
           squares={current.squares}
+          winInfo={winInfo}
           onClick={(i: number) => handleClick(i)}
         />
       </div>
       <div className="game-info">
-        <div>{status}</div>
+        <div>{winInfo?.isDraw ? "Draw" : status}</div>
         <Moves history={history} jumpTo={jumpTo}></Moves>
       </div>
     </div>

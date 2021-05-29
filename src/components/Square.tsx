@@ -3,12 +3,20 @@ import { ISquare } from "interface";
 
 interface SquareProps {
   value: ISquare;
+  isWinLine: boolean;
   onClick: () => void;
 }
 
-export const Square: React.FC<SquareProps> = ({ value, onClick }) => {
+export const Square: React.FC<SquareProps> = ({
+  value,
+  isWinLine,
+  onClick,
+}) => {
   return (
-    <button className="square" onClick={onClick}>
+    <button
+      className={`square ${isWinLine ? "win-line" : ""}`}
+      onClick={onClick}
+    >
       {value}
     </button>
   );

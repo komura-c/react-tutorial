@@ -1,28 +1,25 @@
-import { ISquare } from "interface";
+import { ISquare, WinInfo } from "interface";
 import { Square } from "./Square";
 
 interface BoardProps {
   squares: ISquare[];
+  winInfo: WinInfo;
   onClick: (i: number) => void;
 }
 
-export const Board: React.FC<BoardProps> = ({ squares, onClick }) => {
+export const Board: React.FC<BoardProps> = ({ squares, winInfo, onClick }) => {
   return (
-    <div>
-      {[...Array(3)].map((_, i) => {
+    <div className="board">
+      {squares.map((value, index) => {
+        const isWinLine = winInfo?.winLine?.find((num) => num === index);
+
         return (
-          <div className="board-row" key={i}>
-            {[...Array(3)].map((_, j) => {
-              const index = 3 * i + j;
-              return (
-                <Square
-                  value={squares[index]}
-                  onClick={() => onClick(index)}
-                  key={j}
-                ></Square>
-              );
-            })}
-          </div>
+          <Square
+            value={value}
+            isWinLine={isWinLine ? true : false}
+            onClick={() => onClick(index)}
+            key={index}
+          ></Square>
         );
       })}
     </div>
