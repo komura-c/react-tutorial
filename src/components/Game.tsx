@@ -50,7 +50,9 @@ export const Game: React.FC = () => {
         />
       </div>
       <div className="game-info">
-        <div>{winInfo?.isDraw ? "Draw" : status}</div>
+        <div>
+          {winInfo?.winner ? status : winInfo?.isDraw ? "Draw" : status}
+        </div>
         <Moves history={history} jumpTo={jumpTo}></Moves>
       </div>
     </div>

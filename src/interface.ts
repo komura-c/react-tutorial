@@ -8,4 +8,4 @@ export type WinInfo = {
   winner: ISquare;
   winLine: number[] | null;
   isDraw: boolean;
-} | null;
+};

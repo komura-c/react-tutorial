@@ -11,16 +11,15 @@ export const calculateWinInfo = (squares: Array<ISquare>): WinInfo => {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  const isBoardFill = squares.filter((v) => v).length === squares.length;
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     const isWin =
       squares[a] && squares[a] === squares[b] && squares[a] === squares[c];
-    const isBoardFill = squares.filter((v) => v).length === squares.length;
     if (isWin) {
-      return { winner: squares[a], winLine: lines[i], isDraw: false };
-    } else if (isBoardFill) {
-      return { winner: null, winLine: null, isDraw: true };
+      return { winner: squares[a], winLine: lines[i], isDraw: isBoardFill };
     }
   }
-  return null;
+  return { winner: null, winLine: null, isDraw: isBoardFill };
 };
